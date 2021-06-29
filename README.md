@@ -1,2 +1,2 @@
-# recipe-app-api
-Recipe App API using Django and DRF
+# rental-app-api
+API for real estate rental services using Django DRF and TDD

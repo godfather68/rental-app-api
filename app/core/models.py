@@ -37,4 +37,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+class District(models.Model):
+    """Model for representing the district object"""
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
     

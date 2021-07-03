@@ -46,3 +46,12 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(district), district.name)
+
+    def test_no_of_rooms_less_than_or_equal_to_five(self):
+        """Test that the no of rooms options is <= to 5"""
+        option1 = models.Options.objects.create(no_of_rooms = 5)
+        option2 = models.Options.objects.create(no_of_rooms = 6)
+
+        self.assertLessEqual(option1.no_of_rooms, 5)
+        self.assertNotEqual(option2.no_of_rooms, 5)
+        

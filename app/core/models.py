@@ -1,6 +1,8 @@
+from django.core import validators
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 
@@ -14,7 +16,7 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
 
-        return user
+        return user 
 
     def create_superuser(self, email, password):
         """Creates and saves a new Super user"""
@@ -44,4 +46,13 @@ class District(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+class Options(models.Model):
+    """Model for representing options objects"""
+    no_of_rooms = models.PositiveSmallIntegerField(
+        default=0,
+        validators=[
+            MaxValueValidator(5),
+        ]
+    )
+    furnished = models.BooleanField(default=False)

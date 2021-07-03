@@ -56,3 +56,7 @@ class Options(models.Model):
         ]
     )
     furnished = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.no_of_rooms} rooms and \
+            {'Furnished' if self.furnished is True else 'Non funrnished'}"

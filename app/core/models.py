@@ -79,6 +79,7 @@ class House(models.Model):
     options = models.ForeignKey('Options', on_delete=models.CASCADE)
     furnished = models.BooleanField(default=False)
     published = PublishedManager()  # Custom manager for filtering
+    link = models.CharField(max_length=255, blank=True)
 
     class Meta:
         ordering = ('-publish',)

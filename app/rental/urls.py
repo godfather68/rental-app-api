@@ -8,6 +8,7 @@ from rental import views
 router = DefaultRouter()
 router.register('features', views.OptionViewSet)
 router.register('districts', views.DistrictViewSet)
+router.register('houses', views.HouseViewSet)
 
 app_name = 'rental'
 

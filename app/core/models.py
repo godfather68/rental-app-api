@@ -72,7 +72,7 @@ class House(models.Model):
     )
     title = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=5, decimal_places=2)
-    Description = models.TextField(blank=True)
+    description = models.TextField(blank=True)
     publish = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='review')
     location = models.ForeignKey('District', on_delete=models.CASCADE)

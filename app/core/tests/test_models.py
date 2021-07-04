@@ -54,4 +54,7 @@ class ModelTests(TestCase):
 
         self.assertLessEqual(option1.no_of_rooms, 5)
         self.assertNotEqual(option2.no_of_rooms, 5)
+
+    # def test_house_ad_str(self):
+    #     """test the string representation of an ad"""
         

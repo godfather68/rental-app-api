@@ -58,6 +58,12 @@ class Options(models.Model):
     def __str__(self):
         return f"{self.no_of_rooms} {'bedrooms' if self.no_of_rooms > 1 else 'bedroom'}"
 
+class PublishedManager(models.Model):
+    """Creating a custom manager for published ad"""
+    def get_queryset(self):
+        return super(PublishedManager, self).get_queryset()\
+            .filter(status='published')
+
 class House(models.Model):
     """House ad object"""
     STATUS_CHOICES = (
@@ -72,6 +78,7 @@ class House(models.Model):
     location = models.ForeignKey('District', on_delete=models.CASCADE)
     options = models.ForeignKey('Options', on_delete=models.CASCADE)
     furnished = models.BooleanField(default=False)
+    published = PublishedManager()  # Custom manager for filtering
 
     class Meta:
         ordering = ('-publish',)

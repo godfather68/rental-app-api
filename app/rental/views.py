@@ -17,7 +17,14 @@ class OptionViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     queryset = Options.objects.all()
     serializer_class = serializers.OptionSerializer
 
-class HouseViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+class HouseViewSet(viewsets.ModelViewSet):
     """Manage Houses viewsets"""
     serializer_class = serializers.HouseSerializer
     queryset = House.objects.all()
+
+    def get_serializer_class(self):
+        """Return appropriate serializer class"""
+        if self.action == 'retrieve':
+            return serializers.HouseDetailSerializer
+
+        return self.serializer_class

@@ -4,14 +4,18 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import House, District, Options
 
-from rental.serializers import HouseSerializer
+from rental.serializers import HouseSerializer, HouseDetailSerializer
 
 HOUSES_URL = reverse('rental:house-list')
+
+def detail_url(house_id):
+    """Return house details URL"""
+    return reverse('rental:house-detail', args=[house_id])
 
 def sample_district(name='Downtown Lafayette'):
     """Create and return a sample district"""
@@ -54,4 +58,15 @@ class PublicHouseTestApi(TestCase):
         houses = House.objects.all().order_by('-id')
         serializer = HouseSerializer(houses, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_view_house_detail(self):
+        """Test viewing a house detail"""
+        house = sample_house()
+
+        url = detail_url(house.id)
+        print(url)
+        res = self.client.get(url)
+
+        serializer = HouseDetailSerializer(house)
         self.assertEqual(res.data, serializer.data)

@@ -15,19 +15,19 @@ class OptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Options
-        fields = ('id', 'no_of_rooms', 'furnished')
+        fields = ('id', 'no_of_rooms')
         read_only_fields = ('id', )
 
 class HouseSerializer(serializers.ModelSerializer):
     """Serializer for the House ad object"""
-    options = serializers.PrimaryKeyRelatedField(
-        queryset=Options.objects.all()
-    )
-    location = serializers.PrimaryKeyRelatedField(
-        queryset=District.objects.all()
-    )
-
+    options = OptionSerializer()
+    location = DistrictSerializer()
     class Meta:
         model = House
         fields = ('id', 'title', 'price', 'description','options', 'location', 'furnished')
         read_only_fields = ('id', )
+
+class HouseDetailSerializer(HouseSerializer):
+    """Serializer for house details"""
+    location = DistrictSerializer(read_only=True)
+    options = OptionSerializer(read_only=True)

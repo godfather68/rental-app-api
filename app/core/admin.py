@@ -27,3 +27,4 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.District)
 admin.site.register(models.Options)
+admin.site.register(models.House)

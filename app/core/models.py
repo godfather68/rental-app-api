@@ -1,11 +1,10 @@
-from django.core import validators
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
-
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -55,8 +54,28 @@ class Options(models.Model):
             MaxValueValidator(5),
         ]
     )
-    furnished = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.no_of_rooms} rooms and \
-            {'Furnished' if self.furnished is True else 'Non funrnished'}"
+        return f"{self.no_of_rooms} {'bedrooms' if self.no_of_rooms > 1 else 'bedroom'}"
+
+class House(models.Model):
+    """House ad object"""
+    STATUS_CHOICES = (
+        ('review', 'Review'),
+        ('published', 'Published')
+    )
+    title = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    Description = models.TextField(blank=True)
+    publish = models.DateTimeField(default=timezone.now)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='review')
+    location = models.ForeignKey('District', on_delete=models.CASCADE)
+    options = models.ForeignKey('Options', on_delete=models.CASCADE)
+    furnished = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ('-publish',)
+
+    def __str__(self):
+        return self.title
+

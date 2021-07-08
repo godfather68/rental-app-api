@@ -25,7 +25,7 @@ def sample_options(rooms=3):
     """Create and return a sample house options"""
     return Options.objects.create(no_of_rooms=rooms)
 
-def sample_house(**params):
+def sample_house(user, **params):
     """Create a return a sample house Ad"""
     defaults = {
         'title': '2 bedrooms appartment near metrostation',
@@ -36,13 +36,17 @@ def sample_house(**params):
     }
     defaults.update(params)
 
-    return House.objects.create(**defaults)
+    return House.objects.create(user=user, **defaults)
 
 class PublicHouseTestApi(TestCase):
     """Test the publicly available houses API"""
 
     def setUp(self):
         self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            'test@nihutie.com',
+            'test123'
+        )
 
     def test_access_houses_url(self):
         """Test for retrieving all the available houses"""
@@ -52,7 +56,7 @@ class PublicHouseTestApi(TestCase):
 
     def test_retrieve_houses(self):
         """Test for retrieving a list of houses"""
-        sample_house()
+        sample_house(user=self.user)
         res = self.client.get(HOUSES_URL)
 
         houses = House.objects.all().order_by('-id')
@@ -62,11 +66,41 @@ class PublicHouseTestApi(TestCase):
 
     def test_view_house_detail(self):
         """Test viewing a house detail"""
-        house = sample_house()
+        house = sample_house(user=self.user)
 
         url = detail_url(house.id)
-        print(url)
         res = self.client.get(url)
 
         serializer = HouseDetailSerializer(house)
         self.assertEqual(res.data, serializer.data)
+
+class PrivateHouseTestApi(TestCase):
+    """Privately held API endpoints"""
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            'test@nihutie.com',
+            'test123'
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_create_house(self):
+        """Test for creating an House ad"""
+        location = sample_district(name='Alba')
+        options = sample_options(rooms=4)
+        payload = {
+            'title': '2 bedrooms appartment near metrostation',
+            'price': 650.00,
+            'description': 'beautiful house downtown lafayette',
+            'location': location.id,
+            'options': options.id,
+            'user': self.user
+        }
+        print(payload)
+
+        res = self.client.post(HOUSES_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        house = House.objects.get(id=res.data['id'])
+        print(getattr(house, "price"))
+        self.assertEqual(res.data['price'], str(getattr(house, "price")))

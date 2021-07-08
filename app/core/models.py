@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
@@ -80,6 +81,7 @@ class House(models.Model):
     furnished = models.BooleanField(default=False)
     published = PublishedManager()  # Custom manager for filtering
     link = models.CharField(max_length=255, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ('-publish',)

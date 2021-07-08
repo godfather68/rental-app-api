@@ -22,9 +22,23 @@ class HouseViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.HouseSerializer
     queryset = House.objects.all()
 
+    def _params_to_int(self, str_id):
+        """Converts the string type to int"""
+        return int(str_id)
+
     def get_serializer_class(self):
         """Return appropriate serializer class"""
         if self.action == 'retrieve':
             return serializers.HouseDetailSerializer
 
         return self.serializer_class
+
+    def perform_create(self, serializer):
+        """Create a new house ad"""
+        self.authentication_classes = (TokenAuthentication, )
+        self.permission_classes = (IsAuthenticated, )
+        # location = self.request.query_params.get('location')
+        # options = self.request.query_params.get('options')
+        serializer.save(
+            user=self.request.user
+        )

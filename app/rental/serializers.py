@@ -1,3 +1,4 @@
+from django.db.models import query
 from rest_framework import serializers
 
 from core.models import District, Options, House
@@ -20,8 +21,12 @@ class OptionSerializer(serializers.ModelSerializer):
 
 class HouseSerializer(serializers.ModelSerializer):
     """Serializer for the House ad object"""
-    options = OptionSerializer()
-    location = DistrictSerializer()
+    options = serializers.PrimaryKeyRelatedField(
+        queryset=Options.objects.all()
+    )
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=District.objects.all()
+    )
     class Meta:
         model = House
         fields = ('id', 'title', 'price', 'description','options', 'location', 'furnished')

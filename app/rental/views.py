@@ -28,6 +28,8 @@ class HouseViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """Return appropriate serializer class"""
+        if self.action == 'list':
+            return serializers.HouseListSerializer
         if self.action == 'retrieve':
             return serializers.HouseDetailSerializer
 

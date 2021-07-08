@@ -9,7 +9,7 @@ from rest_framework.test import APIClient
 
 from core.models import House, District, Options
 
-from rental.serializers import HouseSerializer, HouseDetailSerializer
+from rental.serializers import HouseSerializer, HouseListSerializer, HouseDetailSerializer
 
 HOUSES_URL = reverse('rental:house-list')
 
@@ -60,7 +60,7 @@ class PublicHouseTestApi(TestCase):
         res = self.client.get(HOUSES_URL)
 
         houses = House.objects.all().order_by('-id')
-        serializer = HouseSerializer(houses, many=True)
+        serializer = HouseListSerializer(houses, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
@@ -96,11 +96,21 @@ class PrivateHouseTestApi(TestCase):
             'options': options.id,
             'user': self.user
         }
-        print(payload)
 
         res = self.client.post(HOUSES_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         house = House.objects.get(id=res.data['id'])
-        print(getattr(house, "price"))
         self.assertEqual(res.data['price'], str(getattr(house, "price")))
+
+    def test_partial_update_house(self):
+        """Test updating a house with patch"""
+        house = sample_house(user=self.user)
+        payload = {
+            'title': 'new_location'
+        }
+        url = detail_url(house.id)
+        self.client.patch(url, payload)
+
+        house.refresh_from_db()
+        self.assertEqual(house.title, payload['title'])
